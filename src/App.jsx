@@ -890,35 +890,31 @@ map.on('mouseleave', 'hex_res8_fill', () => { map.getCanvas().style.cursor = '';
       </div>
 
       {[
-        {
-          paso: '1. Fuente',
-          texto: 'Partimos de la version publica del RNPDNO, la que la propia Comision Nacional de Busqueda libera sin coordenadas exactas ni datos que identifiquen a una persona -- una decision de privacidad tomada por la fuente, que respetamos y mantenemos en cada paso siguiente.',
-        },
-        {
-          paso: '2. Limpieza',
-          texto: 'Normalizamos nombres de municipios contra el catalogo oficial de INEGI (un dolor de cabeza real en datos mexicanos: el mismo municipio puede aparecer escrito de formas distintas segun quien cargo el registro). Tambien homologamos fechas, sexo y edad a un formato consistente.',
-        },
-        {
-          paso: '3. Deduplicacion',
-          texto: 'Una misma persona puede quedar registrada mas de una vez porque distintas fiscalias cargan por separado. Aplicamos un criterio de deduplicacion documentado antes de contar a nadie dos veces.',
-        },
-        {
-          paso: '4. Agregacion geografica',
-          texto: 'Los casos se agregan por municipio y por celda hexagonal (H3), nunca a nivel de persona individual. Cuando un municipio es muy extenso, esto puede concentrar visualmente los casos en un punto -- lo explicamos directo en el mapa cuando pasa.',
-        },
-        {
-          paso: '5. Supresion de privacidad',
-          texto: 'Las celdas con muy pocos casos se suprimen o generalizan antes de publicarse, para que un numero pequeno en una zona pequena no permita inferir quien es esa persona.',
-        },
-        {
-          paso: '6. Version y trazabilidad',
-          texto: 'Cada corrida del proceso queda registrada con fecha y un identificador unico de la fuente original (un hash). Si alguien pregunta "de donde salio este numero", hay una respuesta exacta, no una suposicion.',
-        },
-        {
-          paso: '7. Actualizacion automatica',
-          texto: 'Un proceso programado revisa la fuente oficial regularmente. Si no cambio nada, no hace nada -- evita procesar o publicar de mas. Si cambio, el pipeline completo corre solo y el sitio se actualiza sin intervencion manual.',
-        },
-      ].map(function (item) {
+  {
+    paso: 'Fuente oficial',
+    texto: 'Los datos parten del Registro Nacional de Personas Desaparecidas y No Localizadas, publicados por la Comision Nacional de Busqueda ya sin informacion que identifique a nadie.',
+  },
+  {
+    paso: 'Limpieza cuidadosa',
+    texto: 'Revisamos y corregimos inconsistencias en los datos -- nombres de lugares mal escritos, formatos distintos, registros incompletos -- antes de que cualquier numero llegue al mapa.',
+  },
+  {
+    paso: 'Sin duplicados',
+    texto: 'Cuando una misma persona queda registrada mas de una vez por distintas autoridades, la contamos solo una. Nadie infla las cifras aqui.',
+  },
+  {
+    paso: 'Privacidad primero',
+    texto: 'Nunca mostramos casos individuales. Cuando una zona tiene muy pocos casos, la agregamos con zonas cercanas para que nadie pueda deducir de quien se trata.',
+  },
+  {
+    paso: 'Trazabilidad total',
+    texto: 'Cada actualizacion queda registrada con fecha exacta. Si preguntas "de donde salio este numero", siempre hay una respuesta precisa, nunca una suposicion.',
+  },
+  {
+    paso: 'Se mantiene solo',
+    texto: 'Un proceso automatico revisa la fuente oficial regularmente y actualiza el sitio sin intervencion manual, apenas hay algo nuevo que mostrar.',
+  },
+].map(function (item) {
         return (
           <div key={item.paso} style={{ marginBottom: 16 }}>
             <div style={{ fontSize: 13.5, fontWeight: 700, color: 'var(--ember-mid)', marginBottom: 4 }}>
