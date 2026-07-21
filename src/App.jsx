@@ -83,6 +83,7 @@ export default function App() {
   const [meta, setMeta] = useState(null);
   const [datosNoticias, setDatosNoticias] = useState([]);
 const [panelNoticias, setPanelNoticias] = useState(false);
+const [panelMetodologia, setPanelMetodologia] = useState(false);
   const [panelAbierto, setPanelAbierto] = useState(true);
   const [celdaSeleccionada, setCeldaSeleccionada] = useState(null);
   const [iframeCompleto, setIframeCompleto] = useState(false);
@@ -377,6 +378,18 @@ map.on('mouseleave', 'hex_res8_fill', () => { map.getCanvas().style.cursor = '';
 >
   Periodismo de investigacion
 </button>
+
+<button
+  onClick={() => setPanelMetodologia(true)}
+  style={{
+    marginTop: 8, width: '100%', padding: '10px 14px', borderRadius: 8,
+    border: '1px solid var(--line)', background: 'rgba(255,255,255,0.04)',
+    color: 'var(--text)', fontSize: 13, fontFamily: 'Inter', cursor: 'pointer',
+    textAlign: 'left', fontWeight: 500,
+  }}
+>
+  Como funciona este mapa
+</button>
       </>
       ) : null}
       </div>
@@ -418,7 +431,11 @@ map.on('mouseleave', 'hex_res8_fill', () => { map.getCanvas().style.cursor = '';
                   {celdaSeleccionada.estado}
                 </div>
               ) : null}
-              
+              <div style={{ fontSize: 10.5, color: 'var(--text-muted)', marginTop: 8, lineHeight: 1.4, opacity: 0.75 }}>
+  Los casos se concentran en el centro del municipio, no en la ubicacion exacta de cada uno
+  (el registro nacional no publica esa ubicacion, por privacidad). En municipios muy extensos,
+  el punto puede verse alejado de donde ocurrieron los casos reales.
+</div>
             </div>
             <button
               onClick={() => setCeldaSeleccionada(null)}
@@ -839,6 +856,83 @@ map.on('mouseleave', 'hex_res8_fill', () => { map.getCanvas().style.cursor = '';
       })}
       <button
         onClick={() => setPanelNoticias(false)}
+        style={{
+          marginTop: 6, width: '100%', padding: '9px', borderRadius: 8,
+          border: 'none', background: 'transparent', color: 'var(--text-muted)',
+          fontSize: 13, fontFamily: 'Inter', cursor: 'pointer',
+        }}
+      >
+        Cerrar
+      </button>
+    </div>
+  </div>
+) : null}
+
+{panelMetodologia ? (
+  <div
+    role="dialog"
+    aria-label="Metodologia"
+    onClick={() => setPanelMetodologia(false)}
+    style={{
+      position: 'absolute', inset: 0, background: 'rgba(10,15,28,0.65)',
+      display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 10,
+    }}
+  >
+    <div
+      className="glass"
+      onClick={(e) => e.stopPropagation()}
+      style={{ maxWidth: 520, width: '92%', padding: 26, maxHeight: '85vh', overflowY: 'auto' }}
+    >
+      <div className="brand-title" style={{ fontSize: 19, marginBottom: 4 }}>Como funciona este mapa</div>
+      <div style={{ fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.5, marginBottom: 20 }}>
+        La credibilidad de este proyecto depende de ser transparentes sobre como se construyen
+        estos numeros. Aqui esta el proceso completo, sin caja negra.
+      </div>
+
+      {[
+        {
+          paso: '1. Fuente',
+          texto: 'Partimos de la version publica del RNPDNO, la que la propia Comision Nacional de Busqueda libera sin coordenadas exactas ni datos que identifiquen a una persona -- una decision de privacidad tomada por la fuente, que respetamos y mantenemos en cada paso siguiente.',
+        },
+        {
+          paso: '2. Limpieza',
+          texto: 'Normalizamos nombres de municipios contra el catalogo oficial de INEGI (un dolor de cabeza real en datos mexicanos: el mismo municipio puede aparecer escrito de formas distintas segun quien cargo el registro). Tambien homologamos fechas, sexo y edad a un formato consistente.',
+        },
+        {
+          paso: '3. Deduplicacion',
+          texto: 'Una misma persona puede quedar registrada mas de una vez porque distintas fiscalias cargan por separado. Aplicamos un criterio de deduplicacion documentado antes de contar a nadie dos veces.',
+        },
+        {
+          paso: '4. Agregacion geografica',
+          texto: 'Los casos se agregan por municipio y por celda hexagonal (H3), nunca a nivel de persona individual. Cuando un municipio es muy extenso, esto puede concentrar visualmente los casos en un punto -- lo explicamos directo en el mapa cuando pasa.',
+        },
+        {
+          paso: '5. Supresion de privacidad',
+          texto: 'Las celdas con muy pocos casos se suprimen o generalizan antes de publicarse, para que un numero pequeno en una zona pequena no permita inferir quien es esa persona.',
+        },
+        {
+          paso: '6. Version y trazabilidad',
+          texto: 'Cada corrida del proceso queda registrada con fecha y un identificador unico de la fuente original (un hash). Si alguien pregunta "de donde salio este numero", hay una respuesta exacta, no una suposicion.',
+        },
+        {
+          paso: '7. Actualizacion automatica',
+          texto: 'Un proceso programado revisa la fuente oficial regularmente. Si no cambio nada, no hace nada -- evita procesar o publicar de mas. Si cambio, el pipeline completo corre solo y el sitio se actualiza sin intervencion manual.',
+        },
+      ].map(function (item) {
+        return (
+          <div key={item.paso} style={{ marginBottom: 16 }}>
+            <div style={{ fontSize: 13.5, fontWeight: 700, color: 'var(--ember-mid)', marginBottom: 4 }}>
+              {item.paso}
+            </div>
+            <div style={{ fontSize: 12.5, color: 'var(--text-muted)', lineHeight: 1.5 }}>
+              {item.texto}
+            </div>
+          </div>
+        );
+      })}
+
+      <button
+        onClick={() => setPanelMetodologia(false)}
         style={{
           marginTop: 6, width: '100%', padding: '9px', borderRadius: 8,
           border: 'none', background: 'transparent', color: 'var(--text-muted)',
