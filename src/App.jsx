@@ -900,7 +900,7 @@ map.on('mouseleave', 'hex_res8_fill', () => { map.getCanvas().style.cursor = '';
   },
   {
     paso: 'Sin duplicados',
-    texto: 'Cuando una misma persona queda registrada mas de una vez por distintas autoridades, la contamos solo una. Nadie infla las cifras aqui.',
+    texto: 'Cuando una misma persona queda registrada mas de una vez por distintas autoridades, la contamos solo una.',
   },
   {
     paso: 'Privacidad primero',
