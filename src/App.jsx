@@ -83,6 +83,7 @@ export default function App() {
   const [meta, setMeta] = useState(null);
   const [panelAbierto, setPanelAbierto] = useState(true);
   const [celdaSeleccionada, setCeldaSeleccionada] = useState(null);
+  const [iframeCompleto, setIframeCompleto] = useState(false);
 
   useEffect(() => {
     fetch('/data/casos_por_anio.json').then((r) => r.json()).then(setDatosAnio);
@@ -649,17 +650,17 @@ map.on('mouseleave', 'hex_res8_fill', () => { map.getCanvas().style.cursor = '';
               localizarla. Este mapa muestra solo datos agregados, asi que te llevamos directo a las
               fuentes oficiales donde puedes ver, compartir y reportar:
             </div>
-            <div style={{
-              width: '100%', height: 480, borderRadius: 10, overflow: 'hidden',
-              border: '1px solid var(--line)', marginBottom: 14, background: 'rgba(255,255,255,0.03)',
-            }}>
-              <iframe
-                src={FUENTE_RNPDNO}
-                title="Consulta Publica RNPDNO en vivo"
-                style={{ width: '100%', height: '100%', border: 'none' }}
-                sandbox="allow-scripts allow-same-origin allow-popups"
-              />
-            </div>
+            <button
+  onClick={() => setIframeCompleto(true)}
+  style={{
+    display: 'block', width: '100%', padding: '14px', borderRadius: 10, marginBottom: 14,
+    border: '1px solid var(--ember-mid)', background: 'rgba(201,122,61,0.1)',
+    color: 'var(--text)', fontSize: 14, fontWeight: 600, cursor: 'pointer',
+    textAlign: 'center',
+  }}
+>
+  Ver Consulta Publica en vivo (pantalla completa)
+</button>
             {FUENTES_OFICIALES.map(function (fuente) {
               return (
                 
@@ -784,6 +785,40 @@ map.on('mouseleave', 'hex_res8_fill', () => { map.getCanvas().style.cursor = '';
           background: 'var(--bg)', fontFamily: 'Inter', color: 'var(--text-muted)', fontSize: 14,
         }}>
           Cargando el mapa...
+        </div>
+      ) : null}
+
+{iframeCompleto ? (
+        <div
+          style={{
+            position: 'fixed', inset: 0, zIndex: 20, background: 'var(--bg)',
+            display: 'flex', flexDirection: 'column',
+          }}
+        >
+          <div
+            className="glass"
+            style={{
+              padding: '10px 16px', display: 'flex', justifyContent: 'space-between',
+              alignItems: 'center', flexShrink: 0,
+            }}
+          >
+            <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>Consulta Publica RNPDNO</span>
+            <button
+              onClick={() => setIframeCompleto(false)}
+              style={{
+                border: '1px solid var(--line)', background: 'transparent', color: 'var(--text)',
+                borderRadius: 8, padding: '6px 12px', fontSize: 13, cursor: 'pointer',
+              }}
+            >
+              Cerrar
+            </button>
+          </div>
+          <iframe
+            src={FUENTE_RNPDNO}
+            title="Consulta Publica RNPDNO en vivo, pantalla completa"
+            style={{ flex: 1, width: '100%', border: 'none' }}
+            sandbox="allow-scripts allow-same-origin allow-popups"
+          />
         </div>
       ) : null}
 
