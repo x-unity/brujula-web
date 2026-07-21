@@ -861,38 +861,42 @@ map.on('mouseleave', 'hex_res8_fill', () => { map.getCanvas().style.cursor = '';
       ) : null}
 
 {iframeCompleto ? (
-        <div
-          style={{
-            position: 'fixed', inset: 0, zIndex: 20, background: 'var(--bg)',
-            display: 'flex', flexDirection: 'column',
-          }}
-        >
-          <div
-            className="glass"
-            style={{
-              padding: '10px 16px', display: 'flex', justifyContent: 'space-between',
-              alignItems: 'center', flexShrink: 0,
-            }}
-          >
-            <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>Consulta Publica RNPDNO</span>
-            <button
-              onClick={() => setIframeCompleto(false)}
-              style={{
-                border: '1px solid var(--line)', background: 'transparent', color: 'var(--text)',
-                borderRadius: 8, padding: '6px 12px', fontSize: 13, cursor: 'pointer',
-              }}
-            >
-              Cerrar
-            </button>
-          </div>
-          <iframe
-            src={FUENTE_RNPDNO}
-            title="Consulta Publica RNPDNO en vivo, pantalla completa"
-            style={{ flex: 1, width: '100%', border: 'none' }}
-            sandbox="allow-scripts allow-same-origin allow-popups"
-          />
-        </div>
-      ) : null}
+  <div
+    style={{
+      position: 'fixed', inset: 0, zIndex: 20, background: 'var(--bg)',
+      display: 'flex', flexDirection: 'column',
+      borderTop: '3px solid var(--ember-mid)',
+    }}
+  >
+    <div
+      style={{
+        padding: '12px 16px', display: 'flex', justifyContent: 'space-between',
+        alignItems: 'center', flexShrink: 0, background: 'rgba(10,15,28,0.95)',
+        backdropFilter: 'blur(10px)', borderBottom: '1px solid var(--line)',
+      }}
+    >
+      <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
+        <span className="brand-title" style={{ fontSize: 16, color: 'var(--ember-mid)' }}>Brujula</span>
+        <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>· viendo Consulta Publica RNPDNO</span>
+      </div>
+      <button
+        onClick={() => setIframeCompleto(false)}
+        style={{
+          border: 'none', background: 'var(--ember-mid)', color: '#1a1108',
+          borderRadius: 8, padding: '8px 16px', fontSize: 13, fontWeight: 700, cursor: 'pointer',
+        }}
+      >
+        ← Volver al mapa
+      </button>
+    </div>
+    <iframe
+      src={FUENTE_RNPDNO}
+      title="Consulta Publica RNPDNO en vivo, pantalla completa"
+      style={{ flex: 1, width: '100%', border: 'none' }}
+      sandbox="allow-scripts allow-same-origin allow-popups"
+    />
+  </div>
+) : null}
 
       <div
   style={{
