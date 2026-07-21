@@ -152,6 +152,8 @@ const alTocarHexagono = (e) => {
   conteo: propiedades.conteo,
   estado: propiedades.estado || 'No determinado',
   h3_index: propiedades.h3_index,
+  lat: e.lngLat.lat,
+  lng: e.lngLat.lng,
 });
 };
 
@@ -396,20 +398,7 @@ map.on('mouseleave', 'hex_res8_fill', () => { map.getCanvas().style.cursor = '';
                   {celdaSeleccionada.estado}
                 </div>
               ) : null}
-              <button
-  onClick={() => {
-    const diagnostico = JSON.stringify(celdaSeleccionada);
-    navigator.clipboard.writeText(diagnostico);
-    alert('Copiado. Pegalo en el chat con Cmd+V.');
-  }}
-  style={{
-    fontSize: 9, color: 'var(--text-muted)', marginTop: 4, opacity: 0.6,
-    border: 'none', background: 'transparent', cursor: 'pointer', textDecoration: 'underline',
-    padding: 0,
-  }}
->
-  Copiar diagnostico
-</button>
+              
             </div>
             <button
               onClick={() => setCeldaSeleccionada(null)}
