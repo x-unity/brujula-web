@@ -344,17 +344,21 @@ hex_res8: { type: 'geojson', data: '/data/h3_res8.geojson' },
       </div>
 
       <button
-        onClick={volverAMexico}
-        className="glass"
-        aria-label="Volver a la vista completa de Mexico"
-        style={{
-          position: 'absolute', top: 20, right: 20, padding: '10px 16px', cursor: 'pointer',
-          fontSize: 12, color: 'var(--text)', fontFamily: 'Inter', border: 'none',
-          opacity: cargando ? 0 : 1, transition: 'opacity 700ms ease 400ms',
-        }}
-      >
-        Mexico completo
-      </button>
+  onClick={volverAMexico}
+  className="glass"
+  aria-label="Volver a la vista completa de Mexico"
+  title="Ver todo Mexico"
+  style={{
+    position: 'absolute', top: 20, right: 20, width: 40, height: 40, cursor: 'pointer',
+    display: 'flex', alignItems: 'center', justifyContent: 'center',
+    fontSize: 17, color: 'var(--text-muted)', border: 'none', borderRadius: '50%',
+    opacity: cargando ? 0 : 1, transition: 'opacity 700ms ease 400ms, color 200ms',
+  }}
+  onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--ember-mid)'; }}
+  onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text-muted)'; }}
+>
+  ⌂
+</button>
 
       <div
         className="glass"
