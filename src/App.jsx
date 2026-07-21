@@ -81,6 +81,8 @@ export default function App() {
   const [datosAnioEstado, setDatosAnioEstado] = useState({});
   const [estadoSeleccionado, setEstadoSeleccionado] = useState('Nacional');
   const [meta, setMeta] = useState(null);
+  const [datosNoticias, setDatosNoticias] = useState([]);
+const [panelNoticias, setPanelNoticias] = useState(false);
   const [panelAbierto, setPanelAbierto] = useState(true);
   const [celdaSeleccionada, setCeldaSeleccionada] = useState(null);
   const [iframeCompleto, setIframeCompleto] = useState(false);
@@ -92,6 +94,7 @@ export default function App() {
     });
     fetch('/data/casos_por_anio_estado.json').then((r) => r.json()).then(setDatosAnioEstado);
     fetch('/data/meta.json').then((r) => r.json()).then(setMeta);
+    fetch('/data/noticias.json').then((r) => r.json()).then(setDatosNoticias);
   }, []);
 
   const datosGraficaAnio = useMemo(() => {
@@ -362,6 +365,18 @@ map.on('mouseleave', 'hex_res8_fill', () => { map.getCanvas().style.cursor = '';
         >
           Ver estadisticas
         </button>
+
+        <button
+  onClick={() => setPanelNoticias(true)}
+  style={{
+    marginTop: 8, width: '100%', padding: '10px 14px', borderRadius: 8,
+    border: '1px solid var(--line)', background: 'rgba(255,255,255,0.04)',
+    color: 'var(--text)', fontSize: 13, fontFamily: 'Inter', cursor: 'pointer',
+    textAlign: 'left', fontWeight: 500,
+  }}
+>
+  Periodismo de investigacion
+</button>
       </>
       ) : null}
       </div>
@@ -778,6 +793,63 @@ map.on('mouseleave', 'hex_res8_fill', () => { map.getCanvas().style.cursor = '';
           </div>
         </div>
       ) : null}
+
+      {panelNoticias ? (
+  <div
+    role="dialog"
+    aria-label="Periodismo de investigacion"
+    onClick={() => setPanelNoticias(false)}
+    style={{
+      position: 'absolute', inset: 0, background: 'rgba(10,15,28,0.65)',
+      display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 10,
+    }}
+  >
+    <div
+      className="glass"
+      onClick={(e) => e.stopPropagation()}
+      style={{ maxWidth: 480, width: '92%', padding: 26, maxHeight: '85vh', overflowY: 'auto' }}
+    >
+      <div className="brand-title" style={{ fontSize: 19, marginBottom: 4 }}>Periodismo de investigacion</div>
+      <div style={{ fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.5, marginBottom: 18 }}>
+        Titulares recientes de medios especializados en este tema, elegidos con cuidado editorial.
+        El contenido completo vive en el sitio original.
+      </div>
+      {datosNoticias.length === 0 ? (
+        <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>No hay articulos disponibles por ahora.</div>
+      ) : null}
+      {datosNoticias.map(function (nota, i) {
+        return (
+          <a
+            key={i}
+            href={nota.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              display: 'block', padding: '12px 14px', borderRadius: 10,
+              border: '1px solid var(--line)', marginBottom: 10,
+              textDecoration: 'none', color: 'var(--text)',
+            }}
+          >
+            <div style={{ fontSize: 14, fontWeight: 600, lineHeight: 1.3 }}>{nota.titulo}</div>
+            <div style={{ fontSize: 11.5, color: 'var(--text-muted)', marginTop: 5 }}>
+              {nota.fuente} · {nota.fecha}
+            </div>
+          </a>
+        );
+      })}
+      <button
+        onClick={() => setPanelNoticias(false)}
+        style={{
+          marginTop: 6, width: '100%', padding: '9px', borderRadius: 8,
+          border: 'none', background: 'transparent', color: 'var(--text-muted)',
+          fontSize: 13, fontFamily: 'Inter', cursor: 'pointer',
+        }}
+      >
+        Cerrar
+      </button>
+    </div>
+  </div>
+) : null}
 
       {cargando ? (
         <div style={{
