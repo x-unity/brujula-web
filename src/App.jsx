@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import maplibregl from 'maplibre-gl';
-import { Protocol } from 'pmtiles';
+
 import { MapboxOverlay } from '@deck.gl/mapbox';
 import { HeatmapLayer } from '@deck.gl/aggregation-layers';
 import 'maplibre-gl/dist/maplibre-gl.css';
@@ -77,6 +77,7 @@ export default function App() {
   const [datosAnioEstado, setDatosAnioEstado] = useState({});
   const [estadoSeleccionado, setEstadoSeleccionado] = useState('Nacional');
   const [meta, setMeta] = useState(null);
+  const [panelAbierto, setPanelAbierto] = useState(true);
 
   useEffect(() => {
     fetch('/data/casos_por_anio.json').then((r) => r.json()).then(setDatosAnio);
@@ -97,8 +98,7 @@ export default function App() {
   }, [datosAnioEstado]);
 
   useEffect(() => {
-    const protocol = new Protocol();
-    maplibregl.addProtocol('pmtiles', protocol.tile);
+    
 
     const map = new maplibregl.Map({
       container: mapContainer.current,
@@ -115,25 +115,23 @@ export default function App() {
             tileSize: 256,
             attribution: '&copy; OpenStreetMap, &copy; CARTO',
           },
-          hex_res6: { type: 'vector', url: 'pmtiles:///tiles/h3_res6.pmtiles' },
-          hex_res8: { type: 'vector', url: 'pmtiles:///tiles/h3_res8.pmtiles' },
+          hex_res6: { type: 'geojson', data: '/data/h3_res6.geojson' },
+hex_res8: { type: 'geojson', data: '/data/h3_res8.geojson' },
         },
         layers: [
           { id: 'basemap', type: 'raster', source: 'basemap', paint: { 'raster-opacity': 0.85 } },
           {
-            id: 'hex_res6_fill',
-            type: 'fill',
-            source: 'hex_res6',
-            'source-layer': 'hexagonos',
-            minzoom: ZOOM_MID,
-            maxzoom: ZOOM_CLOSE,
-            paint: { 'fill-color': HEX_FILL_COLOR, 'fill-outline-color': 'rgba(245,195,78,0.18)' },
-          },
+  id: 'hex_res6_fill',
+  type: 'fill',
+  source: 'hex_res6',
+  minzoom: ZOOM_MID,
+  maxzoom: ZOOM_CLOSE,
+  paint: { 'fill-color': HEX_FILL_COLOR, 'fill-outline-color': 'rgba(245,195,78,0.18)' },
+},
           {
             id: 'hex_res8_fill',
             type: 'fill',
             source: 'hex_res8',
-            'source-layer': 'hexagonos',
             minzoom: ZOOM_CLOSE,
             paint: { 'fill-color': HEX_FILL_COLOR, 'fill-outline-color': 'rgba(245,195,78,0.18)' },
           },
@@ -223,15 +221,30 @@ export default function App() {
     <div style={{ position: 'relative', width: '100vw', height: '100vh', overflow: 'hidden' }}>
       <div ref={mapContainer} style={{ width: '100%', height: '100%' }} />
 
-      <div
-        className="glass"
-        style={{
-          position: 'absolute', top: 20, left: 20, padding: '18px 22px',
-          maxWidth: 290, opacity: cargando ? 0 : 1, transform: cargando ? 'translateY(-8px)' : 'translateY(0)',
-          transition: 'opacity 700ms ease, transform 700ms ease',
-        }}
-      >
-        <div className="brand-title" style={{ fontSize: 22, lineHeight: 1.1 }}>Brujula</div>
+     <div
+  className="glass"
+  style={{
+    position: 'absolute', top: 20, left: 20, padding: '18px 22px',
+    maxWidth: 290, width: 'calc(100vw - 40px)', opacity: cargando ? 0 : 1,
+    transform: cargando ? 'translateY(-8px)' : 'translateY(0)',
+    transition: 'opacity 700ms ease, transform 700ms ease',
+  }}
+>
+  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+    <div className="brand-title" style={{ fontSize: 22, lineHeight: 1.1 }}>Brujula</div>
+    <button
+      onClick={() => setPanelAbierto(!panelAbierto)}
+      aria-label={panelAbierto ? 'Minimizar panel' : 'Mostrar panel'}
+      style={{
+        border: 'none', background: 'transparent', color: 'var(--text-muted)',
+        fontSize: 20, cursor: 'pointer', padding: '2px 8px', lineHeight: 1,
+      }}
+    >
+      {panelAbierto ? '−' : '+'}
+    </button>
+  </div>
+  {panelAbierto ? (
+  <>
         <div style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 6, lineHeight: 1.4 }}>
           Incidencia de desapariciones por zona en Mexico. Datos agregados, historicos, del Registro Nacional.
         </div>
@@ -326,6 +339,8 @@ export default function App() {
         >
           Ver estadisticas
         </button>
+      </>
+      ) : null}
       </div>
 
       <button
