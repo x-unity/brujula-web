@@ -36,6 +36,10 @@ const FUENTE_CNB_COMISIONES = 'https://comisionacionaldebusqueda.segob.gob.mx/co
 const FUENTE_CNB_REPORTE = 'https://cnbreporteinicial.segob.gob.mx/';
 const TEL_LINEA_VIDA = 'tel:8009112000';
 const TEL_SAPTEL = 'tel:5552598121';
+const FUENTE_MNDM = 'https://memoriamndm.org/sobre-el-movndmx/';
+const FUENTE_SOLECITO = 'https://www.facebook.com/colectivo.solecitodeveracruz/';
+const TEL_SOLECITO = 'tel:+522282837089';
+const FUENTE_MADRES_BUSCADORAS_SONORA = 'https://x.com/CeciPatriciaF';
 
 const REFERENCIA_OFICIAL = {
   totalDesaparecidos: 135117,
@@ -539,6 +543,63 @@ map.on('mouseleave', 'hex_res8_fill', () => { map.getCanvas().style.cursor = '';
               <div style={{ fontSize: 14, fontWeight: 600 }}>Comision de Busqueda de tu estado</div>
               <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 3 }}>
                 Directorio oficial de comisiones locales, con contacto por entidad.
+              </div>
+            </a>
+
+<div style={{ fontSize: 13, fontWeight: 700, color: 'var(--ember-high)', marginBottom: 8 }}>
+              Colectivos de busqueda
+            </div>
+            <div style={{ fontSize: 12, color: 'var(--text-muted)', lineHeight: 1.5, marginBottom: 10 }}>
+              Suelen conocer el terreno y el proceso mejor que nadie. Esta es una lista parcial,
+              no exhaustiva — verifica siempre antes de compartir informacion sensible.
+            </div>
+
+            <a
+              href={FUENTE_MNDM}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: 'block', padding: '12px 14px', borderRadius: 10,
+                border: '1px solid var(--line)', marginBottom: 8,
+                textDecoration: 'none', color: 'var(--text)',
+              }}
+            >
+              <div style={{ fontSize: 14, fontWeight: 600 }}>Movimiento por Nuestros Desaparecidos en Mexico</div>
+              <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 3 }}>
+                Red nacional que agrupa colectivos verificados por estado.
+              </div>
+            </a>
+
+            <a
+              href={FUENTE_SOLECITO}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: 'block', padding: '12px 14px', borderRadius: 10,
+                border: '1px solid var(--line)', marginBottom: 8,
+                textDecoration: 'none', color: 'var(--text)',
+              }}
+            >
+              <div style={{ fontSize: 14, fontWeight: 600 }}>Colectivo Solecito (Veracruz)</div>
+              <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 3 }}>
+                Linea Solecito: <a href={TEL_SOLECITO} style={{ color: 'var(--ember-mid)' }} onClick={(e) => e.stopPropagation()}>+52 228 283 7089</a>
+              </div>
+            </a>
+
+            <a
+              href={FUENTE_MADRES_BUSCADORAS_SONORA}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                
+                display: 'block', padding: '12px 14px', borderRadius: 10,
+                border: '1px solid var(--line)', marginBottom: 20,
+                textDecoration: 'none', color: 'var(--text)',
+              }}
+            >
+              <div style={{ fontSize: 14, fontWeight: 600 }}>Madres Buscadoras de Sonora</div>
+              <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 3 }}>
+                Cuenta oficial verificada en X.
               </div>
             </a>
 
