@@ -78,6 +78,7 @@ export default function App() {
   const [estadoSeleccionado, setEstadoSeleccionado] = useState('Nacional');
   const [meta, setMeta] = useState(null);
   const [panelAbierto, setPanelAbierto] = useState(true);
+  const [celdaSeleccionada, setCeldaSeleccionada] = useState(null);
 
   useEffect(() => {
     fetch('/data/casos_por_anio.json').then((r) => r.json()).then(setDatosAnio);
@@ -144,7 +145,21 @@ hex_res8: { type: 'geojson', data: '/data/h3_res8.geojson' },
 
     mapRef.current = map;
     map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'bottom-right');
+const alTocarHexagono = (e) => {
+  if (!e.features || e.features.length === 0) return;
+  const propiedades = e.features[0].properties;
+  setCeldaSeleccionada({
+    conteo: propiedades.conteo,
+    estado: propiedades.estado || 'No determinado',
+  });
+};
 
+map.on('click', 'hex_res6_fill', alTocarHexagono);
+map.on('click', 'hex_res8_fill', alTocarHexagono);
+map.on('mouseenter', 'hex_res6_fill', () => { map.getCanvas().style.cursor = 'pointer'; });
+map.on('mouseleave', 'hex_res6_fill', () => { map.getCanvas().style.cursor = ''; });
+map.on('mouseenter', 'hex_res8_fill', () => { map.getCanvas().style.cursor = 'pointer'; });
+map.on('mouseleave', 'hex_res8_fill', () => { map.getCanvas().style.cursor = ''; });
     map.on('load', async () => {
       const respuesta = await fetch('/data/heat_points.json');
       const puntos = await respuesta.json();
@@ -359,7 +374,54 @@ hex_res8: { type: 'geojson', data: '/data/h3_res8.geojson' },
 >
   ⌂
 </button>
-
+{celdaSeleccionada ? (
+        <div
+          className="glass"
+          style={{
+            position: 'absolute', bottom: 20, left: 220, padding: '16px 20px',
+            maxWidth: 260, animation: 'fadeIn 300ms ease',
+          }}
+        >
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+            <div>
+              <div className="brand-title" style={{ fontSize: 24, color: 'var(--ember-mid)', lineHeight: 1 }}>
+                {celdaSeleccionada.conteo.toLocaleString('es-MX')}
+              </div>
+              <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>
+                casos documentados en esta zona
+              </div>
+              {celdaSeleccionada.estado ? (
+                <div style={{ fontSize: 13, fontWeight: 600, marginTop: 8 }}>
+                  {celdaSeleccionada.estado}
+                </div>
+              ) : null}
+            </div>
+            <button
+              onClick={() => setCeldaSeleccionada(null)}
+              aria-label="Cerrar"
+              style={{
+                border: 'none', background: 'transparent', color: 'var(--text-muted)',
+                fontSize: 16, cursor: 'pointer', padding: 0, lineHeight: 1,
+              }}
+            >
+              ✕
+            </button>
+          </div>
+          <a
+            href={FUENTE_CNB_COMISIONES}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              display: 'block', marginTop: 12, padding: '9px 12px', borderRadius: 8,
+              border: '1px solid var(--ember-mid)', background: 'rgba(201,122,61,0.1)',
+              color: 'var(--text)', fontSize: 12.5, fontWeight: 600, textAlign: 'center',
+              textDecoration: 'none',
+            }}
+          >
+            Contactar Comision de Busqueda
+          </a>
+        </div>
+      ) : null}
       <div
         className="glass"
         style={{
