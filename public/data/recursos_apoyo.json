@@ -1,0 +1,92 @@
+{
+  "fecha_verificacion": "20 de julio de 2026",
+  "directorios_generales": [
+    {
+      "nombre": "Directorio MNDM por estado",
+      "tipo": "directorio",
+      "descripcion": "Movimiento por Nuestros Desaparecidos en Mexico: mas de 50 colectivos, todos los estados.",
+      "url": "https://memoriamndm.org/sobre-el-movndmx/directorio-de-colectivos/",
+      "confianza": "directorio nacional"
+    },
+    {
+      "nombre": "Directorio No Estan Solas",
+      "tipo": "directorio",
+      "descripcion": "Colectivos, ONG y comisiones locales, filtrable por categoria.",
+      "url": "https://noestansolas.mx/en/directorio/",
+      "confianza": "directorio especializado"
+    }
+  ],
+  "estados": {
+    "Estado De México": [
+      {
+        "nombre": "COBUPEM - Comision de Busqueda de Personas del Edomex",
+        "tipo": "comision estatal",
+        "descripcion": "Comision oficial estatal de busqueda.",
+        "url": "https://cobupem.edomex.gob.mx/",
+        "confianza": "fuente oficial"
+      },
+      {
+        "nombre": "Buscandote con Amor",
+        "tipo": "colectivo",
+        "descripcion": "Colectivo de familias en busqueda en Estado de Mexico.",
+        "url": "https://buscandoteconamoredomex.com/",
+        "confianza": "sitio propio"
+      }
+    ],
+    "Tamaulipas": [
+      {
+        "nombre": "Red de Desaparecidos en Tamaulipas (REDETAM)",
+        "tipo": "colectivo",
+        "descripcion": "Colectivo de familias. Contacto publicado: contacto@desaparecidostamaulipas.com.mx",
+        "url": "https://www.facebook.com/RedDeDesaparecidosEnTamaulipas",
+        "confianza": "perfil publico"
+      }
+    ],
+    "Sinaloa": [
+      {
+        "nombre": "Sabuesos Guerreras, A.C.",
+        "tipo": "colectivo",
+        "descripcion": "Colectivo de familias. Contacto publicado: sabuesosguerreras2018@gmail.com",
+        "url": "https://www.facebook.com/1234sabuesosguerreras/",
+        "confianza": "perfil publico"
+      }
+    ],
+    "Sonora": [
+      {
+        "nombre": "Madres Buscadoras de Sonora",
+        "tipo": "colectivo",
+        "descripcion": "Cuenta publica del colectivo.",
+        "url": "https://x.com/CeciPatriciaF",
+        "confianza": "perfil publico"
+      }
+    ],
+    "Jalisco": [
+      {
+        "nombre": "Madres Buscadoras de Jalisco",
+        "tipo": "colectivo",
+        "descripcion": "Colectivo de familias en busqueda.",
+        "url": "https://www.facebook.com/madresbuscadorasdejalisco/",
+        "confianza": "perfil publico"
+      }
+    ],
+    "Veracruz": [
+      {
+        "nombre": "Colectivo Solecito",
+        "tipo": "colectivo",
+        "descripcion": "Linea Solecito: +52 228 283 7089",
+        "url": "https://www.facebook.com/colectivo.solecitodeveracruz/",
+        "tel": "tel:+522282837089",
+        "confianza": "perfil publico"
+      }
+    ],
+    "Guanajuato": [
+      {
+        "nombre": "Buscadoras Gto",
+        "tipo": "colectivo",
+        "descripcion": "Colectivo de familias en busqueda, con sede en Leon.",
+        "url": "https://www.facebook.com/p/Buscadoras-Gto-100064354976899/",
+        "confianza": "perfil publico"
+      }
+    ]
+  }
+}
