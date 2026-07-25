@@ -36,10 +36,51 @@ const FUENTE_CNB_COMISIONES = 'https://comisionacionaldebusqueda.segob.gob.mx/co
 const FUENTE_CNB_REPORTE = 'https://cnbreporteinicial.segob.gob.mx/';
 const TEL_LINEA_VIDA = 'tel:8009112000';
 const TEL_SAPTEL = 'tel:5552598121';
-const FUENTE_MNDM = 'https://memoriamndm.org/sobre-el-movndmx/';
+const FUENTE_MNDM_DIRECTORIO = 'https://memoriamndm.org/sobre-el-movndmx/directorio-de-colectivos/';
+const FUENTE_NO_ESTAN_SOLAS = 'https://noestansolas.mx/en/directorio/';
 const FUENTE_SOLECITO = 'https://www.facebook.com/colectivo.solecitodeveracruz/';
 const TEL_SOLECITO = 'tel:+522282837089';
 const FUENTE_MADRES_BUSCADORAS_SONORA = 'https://x.com/CeciPatriciaF';
+
+// Directorio por estado: cobertura parcial, priorizando los estados con mas casos
+// documentados. Cada entrada se verifico contra la pagina propia del colectivo o su
+// perfil oficial en memoriamndm.org — nunca se incluye un telefono que no aparezca
+// directamente en esa fuente (una linea equivocada es peor que no tener ninguna).
+// Para estados sin entrada aqui, el panel de ayuda enlaza al directorio completo
+// (MNDM / No Estan Solas) en vez de inventar un contacto.
+// TODO: ampliar cobertura a mas estados; revisar periodicamente que los links sigan vivos.
+const RECURSOS_POR_ESTADO = {
+  'Estado De México': [
+    { nombre: 'COBUPEM — Comisión de Búsqueda de Personas del Edomex', descripcion: 'Comisión oficial estatal de búsqueda.', url: 'https://cobupem.edomex.gob.mx/' },
+    { nombre: 'Buscándote con Amor (Estado de México)', descripcion: 'Colectivo de familias en búsqueda.', url: 'https://buscandoteconamoredomex.com/' },
+  ],
+  Tamaulipas: [
+    { nombre: 'Red de Desaparecidos en Tamaulipas (REDETAM)', descripcion: 'Colectivo de familias. Contacto: contacto@desaparecidostamaulipas.com.mx', url: 'https://www.facebook.com/RedDeDesaparecidosEnTamaulipas' },
+  ],
+  Sinaloa: [
+    { nombre: 'Sabuesos Guerreras, A.C.', descripcion: 'Colectivo de familias. Contacto: sabuesosguerreras2018@gmail.com', url: 'https://www.facebook.com/1234sabuesosguerreras/' },
+  ],
+  Sonora: [
+    { nombre: 'Madres Buscadoras de Sonora', descripcion: 'Cuenta oficial verificada en X.', url: FUENTE_MADRES_BUSCADORAS_SONORA },
+  ],
+  Jalisco: [
+    { nombre: 'Madres Buscadoras de Jalisco', descripcion: 'Colectivo de familias en búsqueda.', url: 'https://www.facebook.com/madresbuscadorasdejalisco/' },
+  ],
+  Veracruz: [
+    { nombre: 'Colectivo Solecito', descripcion: `Línea Solecito: ${TEL_SOLECITO.replace('tel:', '')}`, url: FUENTE_SOLECITO, tel: TEL_SOLECITO },
+  ],
+  Guanajuato: [
+    { nombre: 'Buscadoras Gto', descripcion: 'Colectivo de familias en búsqueda, con sede en León.', url: 'https://www.facebook.com/p/Buscadoras-Gto-100064354976899/' },
+  ],
+};
+
+const PASOS_PRIMERAS_HORAS = [
+  'No existen las "24, 48 o 72 horas de espera" para reportar. Es un mito sin sustento legal: la autoridad debe iniciar la búsqueda desde el primer momento en que reportas.',
+  'Reúne lo que tengas a la mano: fotos recientes (de frente y de cuerpo completo), señas particulares (tatuajes, cicatrices, lunares), la ropa que llevaba puesta, y a dónde iba o con quién.',
+  'Guarda copia de todo lo que compartas con la autoridad: número de carpeta de investigación, capturas de pantalla, nombre de quien te atendió.',
+  'Contacta también a un colectivo de tu estado, además de reportar: conocen el terreno y el proceso real, y pueden acompañarte.',
+  'Antes de publicar datos sensibles del caso en redes, coméntalo con la autoridad o un colectivo: en algunos casos exponerlos puede poner en riesgo a la persona buscada.',
+];
 
 const REFERENCIA_OFICIAL = {
   totalDesaparecidos: 135117,
@@ -461,6 +502,19 @@ map.on('mouseleave', 'hex_res8_fill', () => { map.getCanvas().style.cursor = '';
           >
             Contactar Comision de Busqueda
           </a>
+          {celdaSeleccionada.estado && celdaSeleccionada.estado !== 'No determinado' ? (
+            <button
+              onClick={() => { setEstadoSeleccionado(celdaSeleccionada.estado); setPanelAyuda(true); }}
+              style={{
+                display: 'block', width: '100%', marginTop: 8, padding: '9px 12px', borderRadius: 8,
+                border: '1px solid var(--line)', background: 'transparent',
+                color: 'var(--text)', fontSize: 12.5, fontWeight: 600, textAlign: 'center',
+                cursor: 'pointer', fontFamily: 'Inter',
+              }}
+            >
+              Ver ayuda y colectivos en {celdaSeleccionada.estado}
+            </button>
+          ) : null}
         </div>
       ) : null}
       <div
@@ -503,9 +557,20 @@ map.on('mouseleave', 'hex_res8_fill', () => { map.getCanvas().style.cursor = '';
             style={{ maxWidth: 460, width: '92%', padding: 26, maxHeight: '85vh', overflowY: 'auto' }}
           >
             <div className="brand-title" style={{ fontSize: 20, marginBottom: 4 }}>Estoy buscando a alguien</div>
-            <div style={{ fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.5, marginBottom: 20 }}>
+            <div style={{ fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.5, marginBottom: 16 }}>
               No estas sola ni solo. Aqui esta lo que puedes hacer ahora mismo.
             </div>
+
+            <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--ember-high)', marginBottom: 8 }}>
+              Qué hacer en las primeras horas
+            </div>
+            <ul style={{ margin: '0 0 20px', padding: '0 0 0 18px', listStyle: 'disc' }}>
+              {PASOS_PRIMERAS_HORAS.map((paso) => (
+                <li key={paso} style={{ fontSize: 12.5, color: 'var(--text)', lineHeight: 1.5, marginBottom: 8 }}>
+                  {paso}
+                </li>
+              ))}
+            </ul>
 
             <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--ember-high)', marginBottom: 8 }}>
               Apoyo emocional inmediato, gratuito
@@ -580,15 +645,42 @@ map.on('mouseleave', 'hex_res8_fill', () => { map.getCanvas().style.cursor = '';
             </a>
 
 <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--ember-high)', marginBottom: 8 }}>
-              Colectivos de busqueda
+              Colectivos de busqueda{estadoSeleccionado !== 'Nacional' ? ` — ${estadoSeleccionado}` : ''}
             </div>
             <div style={{ fontSize: 12, color: 'var(--text-muted)', lineHeight: 1.5, marginBottom: 10 }}>
-              Suelen conocer el terreno y el proceso mejor que nadie. Esta es una lista parcial,
-              no exhaustiva — verifica siempre antes de compartir informacion sensible.
+              Suelen conocer el terreno y el proceso mejor que nadie. Cobertura parcial —
+              verifica siempre antes de compartir informacion sensible.
             </div>
 
+            {(RECURSOS_POR_ESTADO[estadoSeleccionado] || []).map((r) => (
+              <a
+                key={r.nombre}
+                href={r.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  display: 'block', padding: '12px 14px', borderRadius: 10,
+                  border: '1px solid var(--ember-mid)', background: 'rgba(201,122,61,0.08)', marginBottom: 8,
+                  textDecoration: 'none', color: 'var(--text)',
+                }}
+              >
+                <div style={{ fontSize: 14, fontWeight: 600 }}>{r.nombre}</div>
+                <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 3 }}>
+                  {r.tel ? (
+                    <a href={r.tel} style={{ color: 'var(--ember-mid)' }} onClick={(e) => e.stopPropagation()}>{r.descripcion}</a>
+                  ) : r.descripcion}
+                </div>
+              </a>
+            ))}
+            {!RECURSOS_POR_ESTADO[estadoSeleccionado] && estadoSeleccionado !== 'Nacional' ? (
+              <div style={{ fontSize: 12, color: 'var(--text-muted)', lineHeight: 1.5, marginBottom: 10 }}>
+                Todavia no tenemos un colectivo verificado para {estadoSeleccionado} en esta lista.
+                Busca en los directorios completos de abajo.
+              </div>
+            ) : null}
+
             <a
-              href={FUENTE_MNDM}
+              href={FUENTE_MNDM_DIRECTORIO}
               target="_blank"
               rel="noopener noreferrer"
               style={{
@@ -597,42 +689,25 @@ map.on('mouseleave', 'hex_res8_fill', () => { map.getCanvas().style.cursor = '';
                 textDecoration: 'none', color: 'var(--text)',
               }}
             >
-              <div style={{ fontSize: 14, fontWeight: 600 }}>Movimiento por Nuestros Desaparecidos en Mexico</div>
+              <div style={{ fontSize: 14, fontWeight: 600 }}>Directorio MNDM por estado</div>
               <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 3 }}>
-                Red nacional que agrupa colectivos verificados por estado.
+                Movimiento por Nuestros Desaparecidos en Mexico: mas de 50 colectivos, todos los estados.
               </div>
             </a>
 
             <a
-              href={FUENTE_SOLECITO}
+              href={FUENTE_NO_ESTAN_SOLAS}
               target="_blank"
               rel="noopener noreferrer"
               style={{
-                display: 'block', padding: '12px 14px', borderRadius: 10,
-                border: '1px solid var(--line)', marginBottom: 8,
-                textDecoration: 'none', color: 'var(--text)',
-              }}
-            >
-              <div style={{ fontSize: 14, fontWeight: 600 }}>Colectivo Solecito (Veracruz)</div>
-              <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 3 }}>
-                Linea Solecito: <a href={TEL_SOLECITO} style={{ color: 'var(--ember-mid)' }} onClick={(e) => e.stopPropagation()}>+52 228 283 7089</a>
-              </div>
-            </a>
-
-            <a
-              href={FUENTE_MADRES_BUSCADORAS_SONORA}
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{
-                
                 display: 'block', padding: '12px 14px', borderRadius: 10,
                 border: '1px solid var(--line)', marginBottom: 20,
                 textDecoration: 'none', color: 'var(--text)',
               }}
             >
-              <div style={{ fontSize: 14, fontWeight: 600 }}>Madres Buscadoras de Sonora</div>
+              <div style={{ fontSize: 14, fontWeight: 600 }}>Directorio "No Estan Solas"</div>
               <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 3 }}>
-                Cuenta oficial verificada en X.
+                Colectivos, ONG y comisiones locales, filtrable por categoria.
               </div>
             </a>
 

@@ -44,3 +44,25 @@ Los colectivos de madres buscadoras y organizaciones civiles tienen información
 - **Fase 3:** + reportes de colectivos (con verificación).
 
 Cada fuente entra como un conector independiente en la Capa 1, sin acoplarse a las demás.
+
+## Investigacion (julio 2026): dashboard oficial en vivo del RNPDNO — descartado como fuente automatizada
+
+El portal `versionpublicarnpdno.segob.gob.mx` (version publica oficial, con dashboard interactivo)
+quedo disponible y se investigo como posible fuente en vivo (desfase declarado de ~5 minutos,
+incluye variable de tipo de delito que no tenemos). Al inspeccionar el trafico de red se confirmo
+que expone endpoints internos (p. ej. `POST /ContextoGeneral/Totales`) que devuelven JSON, pero:
+
+- Requieren una cookie de sesion (`.AspNet.ApplicationCookie`) generada solo al cargar el sitio
+  en un navegador real.
+- Exigen un token anti-CSRF (`__RequestVerificationToken`), cuyo proposito especifico es impedir
+  peticiones automatizadas de origenes externos.
+- Los encabezados `X-Frame-Options: SAMEORIGIN` y `frame-ancestors 'none'` bloquean incluso el
+  iframe (a diferencia de la Consulta Publica RNPDNO, que si permite incrustarse).
+
+**Decision:** no construir un conector automatizado contra estos endpoints. Es la misma señal
+tecnica que el `robots.txt` de Alerta AMBER (ver docs/07-PRIVACY-SECURITY.md): un sitio puede no
+tener robots.txt y aun asi dejar claro, por diseño tecnico, que no esta pensado para consumo
+automatizado externo. Rodear un token anti-CSRF cruzaria esa linea. Seguimos usando el espejo
+comunitario (basado en la Consulta Publica, de uso individual legitimo) como fuente principal.
+`VERIFY` futuro: si la CNB publica alguna vez una API oficial documentada para terceros, migrar a
+esa en vez de este dashboard interno.

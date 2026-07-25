@@ -50,6 +50,27 @@ El mapa necesita datos distintos según el zoom (ver [`05-MAP-RENDERING.md`](./0
 
 Estas resoluciones se **precalculan** en el pipeline y se materializan como teselas, no se calculan en cada request.
 
+**Nota de diagnostico (julio 2026, actualizada):** se investigo un caso donde la atribucion de
+estado parecia incorrecta en una celda H3. Tras verificar con el codigo h3_index exacto (copiado
+via boton, no transcrito a mano), se confirmo que el algoritmo de "estado dominante" funciona
+correctamente — el caso reportado como sospechoso resulto ser un error de transcripcion manual del
+codigo H3 (15 caracteres, faciles de copiar mal desde una captura de pantalla), no un bug real.
+Leccion de proceso: para depurar celdas especificas, usar siempre el boton de "copiar diagnostico"
+de la interfaz en vez de transcribir el h3_index a mano.
+
+**Limite real de diseño (julio 2026): concentracion por centroide de municipio.** El RNPDNO no
+publica coordenadas exactas de cada caso (por privacidad, decision correcta desde el diseño — ver
+docs/02-DATA-SOURCES.md). Para ubicar los casos en el mapa, el pipeline usa el centroide (punto
+geografico central) del municipio y ahi concentra TODOS sus casos. Esto significa que en
+municipios territorialmente muy extensos (p. ej. Ecatepec de Morelos, Estado de Mexico), el mapa
+puede dar la impresion visual de que "no hay nada" en la mayor parte del municipio y que todo se
+concentra en un solo punto — cuando en realidad ese punto representa el total del municipio
+completo, no la ubicacion real de cada caso. No es un error ni un vacio de datos: es un limite
+honesto del metodo, comunicado directamente al usuario en la tarjeta de cada hexagono (ver
+frontend, panel al tocar una celda). Alternativa futura (no implementada): ponderar el punto
+representativo por densidad poblacional dentro del municipio en vez de su centroide geometrico
+simple, si se consigue una fuente de datos intramunicipal confiable y publica.
+
 ## Módulos futuros (no MVP, esbozo)
 
 Cuando lleguen los módulos 2 y 3, se agregan tablas **en su propio esquema**, sin tocar lo anterior:
